@@ -1,5 +1,6 @@
 import random
 import os
+import time
 from argparse import ArgumentParser
 
 import gradio as gr
@@ -104,6 +105,11 @@ def process(
     except Exception as e:
         return error_image, f"Failed: {e} :("
 
+    named_tuple = time.localtime() # get struct_time
+    time_string = time.strftime("%Y_%m_%d_%H_%M_%S", named_tuple)   
+    output_name = "HYPIR_" + time_string + ".jpg"
+    pil_image.save(output_name, format='JPEG', quality=95)
+    
     return pil_image, f"Success! :)\nUsed prompt: {prompt}"
 
 
@@ -126,7 +132,7 @@ with block:
                 "Prompt (Input 'auto' to use gpt-generated caption)"
                 if args.gpt_caption else "Prompt"
             ))
-            upscale = gr.Slider(minimum=1, maximum=8, value=1, label="Upscale Factor", step=1)
+            upscale = gr.Slider(minimum=1, maximum=8, value=4, label="Upscale Factor", step=1)
             seed = gr.Number(label="Seed", value=-1)
             run = gr.Button(value="Run")
         with gr.Column():
